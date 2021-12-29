@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".loginActivity"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#CFF6F0">
+
+    <EditText
+        android:background="@drawable/roundedinputfields"
+        android:layout_width="match_parent"
+        android:layout_margin="20dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:hint="Email"
+        android:padding="10dp"
+        android:autofillHints="User Name"
+        android:inputType="textEmailAddress"
+        android:id="@+id/loginEmail">
+    </EditText>
+    <EditText
+        android:background="@drawable/roundedinputfields"
+        android:padding="10dp"
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_margin="20dp"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:autofillHints="Password"
+        android:id="@+id/loginPassword">
+    </EditText>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textSize="20sp"
+        android:id="@+id/login">
+
+    </Button>
+</LinearLayout>
