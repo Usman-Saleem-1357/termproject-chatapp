@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.termproject">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TermProject">
+        <activity
+            android:name=".NearbyUserList"
+            android:exported="false" />
         <activity
             android:name=".Chatview"
             android:exported="false" />
@@ -28,9 +31,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
     </application>
 
 </manifest>
