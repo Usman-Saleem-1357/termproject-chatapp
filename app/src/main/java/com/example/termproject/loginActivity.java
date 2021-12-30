@@ -59,7 +59,7 @@ public class loginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    Intent intent1 = new Intent(loginActivity.this,Chatview.class);
+                    Intent intent1 = new Intent(loginActivity.this,NearbyUserList.class);
                     intent1.putExtra("uid",fAuth.getCurrentUser().getUid());
                     startActivity(intent1);
                 }

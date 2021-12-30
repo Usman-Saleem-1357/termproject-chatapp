@@ -14,7 +14,7 @@
         android:background="@drawable/roundedinputfields"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:hint="Enter Email"
         android:layout_margin="20dp"
         android:textSize="20sp"

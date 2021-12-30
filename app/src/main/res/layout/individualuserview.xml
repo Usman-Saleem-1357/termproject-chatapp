@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textSize="20sp"
+        android:id="@+id/usernameinlist"
+        android:text="sample user"
+        android:textStyle="bold"
+        android:textColor="@color/black">
+    </TextView>
+    <LinearLayout
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="sample email"
+            android:textColor="@color/black"
+            android:id="@+id/emailinlist">
+        </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:text="sample location"
+            android:id="@+id/locationinlist">
+        </TextView>
+    </LinearLayout>
+</LinearLayout>
