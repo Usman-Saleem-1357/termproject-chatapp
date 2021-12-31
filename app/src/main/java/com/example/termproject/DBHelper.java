@@ -2,6 +2,7 @@ package com.example.termproject;
 
 import androidx.annotation.NonNull;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,6 +41,23 @@ public class DBHelper{
             userModel[0] = data.getValue(UserModel.class);
         }
         return userModel[0];
+    }
+
+    public FirebaseRecyclerOptions<UserModel> getUserOptions()
+    {
+        return new FirebaseRecyclerOptions.Builder<UserModel>().setQuery(databaseReference.child("users")
+                ,UserModel.class).build();
+    }
+
+    public FirebaseRecyclerOptions<RequestModel> getRequestOptions(String uid)
+    {
+        return new FirebaseRecyclerOptions.Builder<RequestModel>().setQuery(databaseReference.child("Requests").child(getUID())
+                ,RequestModel.class).build();
+    }
+
+    public Task<Void> sendRequest(RequestModel req)
+    {
+        return databaseReference.child("Requests").child(getUID()).child("reqid").setValue(req.reqid);
     }
 
     public Task<AuthResult> loginAuthentication(String username, String password)

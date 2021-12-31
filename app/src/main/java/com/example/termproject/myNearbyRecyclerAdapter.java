@@ -42,7 +42,7 @@ public class myNearbyRecyclerAdapter extends FirebaseRecyclerAdapter<UserModel,m
         float[] res = new float[1];
         res[0] = 0.0f;
         Location.distanceBetween(currUser.lat,currUser.longi,model.lat,model.longi,res);
-        if (!id.equals(model.uid)) {
+        if (!id.equals(model.uid) && res[0]<0.02f) {
             holder.setData(model.username, model.location, model.uid);
             holder.itemView.setVisibility(View.VISIBLE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
