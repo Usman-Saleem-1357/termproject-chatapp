@@ -1,5 +1,6 @@
 package com.example.termproject;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class myNearbyViewHolder extends RecyclerView.ViewHolder {
     private final TextView emailview,userNameView,locationView;
-
+    public String uid;
 
     public myNearbyViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,7 +22,9 @@ public class myNearbyViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),locationView.getText() , Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(itemView.getContext(),IndividualUserView.class);
+                intent.putExtra("uid",uid);
+                itemView.getContext().startActivity(intent);
             }
         });
     }
@@ -30,5 +33,7 @@ public class myNearbyViewHolder extends RecyclerView.ViewHolder {
     {
         userNameView.setText(username);
         locationView.setText(location);
+        emailview.setText(uid);
+        this.uid = uid;
     }
 }

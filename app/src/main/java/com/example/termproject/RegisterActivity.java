@@ -42,9 +42,9 @@ public class RegisterActivity extends AppCompatActivity {
     EditText password;
     EditText confPass;
     double lat,longi;
-    FirebaseAuth fAuth;
+    DBHelper dbHelper;
     FusedLocationProviderClient provider;
-    DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReferenceFromUrl("https://termproject-chatapp-default-rtdb.firebaseio.com/");
+    //DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReferenceFromUrl("https://termproject-chatapp-default-rtdb.firebaseio.com/");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else {
 
-            fAuth.createUserWithEmailAndPassword(emailtext,passwordtext).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            dbHelper.registerUser(emailtext,passwordtext).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful())
@@ -119,19 +119,18 @@ public class RegisterActivity extends AppCompatActivity {
                         String add="";
                         try {
                             List<Address> li = geocoder.getFromLocation(lat,longi,1);
-                            add = li.get(0).getLocality();
+                            add = li.get(0).getLocality() + " , " + li.get(0).getAdminArea() + " , " + li.get(0).getCountryName();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-                        String uid = user1.getUid();
-                        UserModel user = new UserModel(lat,longi,usernametext,add,uid);
-                        databaseReference.child("users").child(uid).setValue(user);
+                        UserModel user = new UserModel(lat,longi,usernametext,add,dbHelper.getUID());
+                        //databaseReference.child("users").child(uid).setValue(user);
+                        dbHelper.registerUserData(user);
                         //databaseReference.child("users").child("email").child("username").setValue(usernametext);
                         Intent intent = new Intent(RegisterActivity.this,loginActivity.class);
                         intent.putExtra("user",emailtext);
                         intent.putExtra("pass",passwordtext);
-                        intent.putExtra("uid",uid);
+                        intent.putExtra("uid",dbHelper.getUID());
                         startActivity(intent);
                         finish();
                     }
@@ -152,9 +151,9 @@ public class RegisterActivity extends AppCompatActivity {
         username = findViewById(R.id.regUserName);
         password = findViewById(R.id.regPassword);
         confPass = findViewById(R.id.confPass);
-        fAuth = FirebaseAuth.getInstance();
         provider = LocationServices.getFusedLocationProviderClient(this);
         lat = 31.526542688148975;
         longi = 74.28628631738394;
+        dbHelper = new DBHelper();
     }
 }

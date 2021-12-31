@@ -3,6 +3,7 @@ package com.example.termproject;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,15 +24,24 @@ import java.util.zip.Inflater;
 
 public class myNearbyRecyclerAdapter extends FirebaseRecyclerAdapter<UserModel,myNearbyViewHolder> {
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    DBHelper dbHelper = new DBHelper();
+    //UserModel currUser;
     public myNearbyRecyclerAdapter(@NonNull FirebaseRecyclerOptions<UserModel> options) {
         super(options);
+
     }
 
     @Override
     protected void onBindViewHolder(@NonNull myNearbyViewHolder holder, int position, @NonNull UserModel model)
     {
-        String id = fAuth.getCurrentUser().getUid();
+        String id =dbHelper.getUID();
+        UserModel currUser= null;
+        while(currUser == null) {
+            currUser = dbHelper.getUserData(id);
+        }
+        float[] res = new float[1];
+        res[0] = 0.0f;
+        Location.distanceBetween(currUser.lat,currUser.longi,model.lat,model.longi,res);
         if (!id.equals(model.uid)) {
             holder.setData(model.username, model.location, model.uid);
             holder.itemView.setVisibility(View.VISIBLE);
