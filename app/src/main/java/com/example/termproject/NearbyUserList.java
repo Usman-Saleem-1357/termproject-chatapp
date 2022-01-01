@@ -30,8 +30,7 @@ public class NearbyUserList extends AppCompatActivity {
         Intent intent = getIntent();
         dbHelper = new DBHelper();
         String uid = intent.getStringExtra("uid");
-        FirebaseRecyclerOptions<UserModel> options = new FirebaseRecyclerOptions.Builder<UserModel>().setQuery(ref.child("users")
-                ,UserModel.class).build();
+        FirebaseRecyclerOptions<UserModel> options = dbHelper.getUserOptions();
         adapter = new myNearbyRecyclerAdapter(options);
         recyclerView.setAdapter(adapter);
         toReq = findViewById(R.id.toRequests);

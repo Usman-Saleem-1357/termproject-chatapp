@@ -28,7 +28,6 @@ public class myNearbyRecyclerAdapter extends FirebaseRecyclerAdapter<UserModel,m
     //UserModel currUser;
     public myNearbyRecyclerAdapter(@NonNull FirebaseRecyclerOptions<UserModel> options) {
         super(options);
-
     }
 
     @Override
@@ -42,7 +41,8 @@ public class myNearbyRecyclerAdapter extends FirebaseRecyclerAdapter<UserModel,m
         float[] res = new float[1];
         res[0] = 0.0f;
         Location.distanceBetween(currUser.lat,currUser.longi,model.lat,model.longi,res);
-        if (!id.equals(model.uid) && res[0]<0.02f) {
+        if (!id.equals(model.uid) && res[0]<2000.0f) {
+            res[0]=0f;
             holder.setData(model.username, model.location, model.uid);
             holder.itemView.setVisibility(View.VISIBLE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT

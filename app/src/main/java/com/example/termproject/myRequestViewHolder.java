@@ -8,13 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class myRequestViewHolder extends RecyclerView.ViewHolder {
-    private final TextView idview,userNameView,locationView;
+    public TextView idview,userNameView,locationView;
     public String uid;
     public myRequestViewHolder(@NonNull View itemView) {
         super(itemView);
-        idview = itemView.findViewById(R.id.idinlist);
-        userNameView = itemView.findViewById(R.id.usernameinlist);
-        locationView = itemView.findViewById(R.id.locationinlist);
+        idview = itemView.findViewById(R.id.requserid);
+        userNameView = itemView.findViewById(R.id.requsername);
+        locationView = itemView.findViewById(R.id.requserlocation);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -42,7 +42,8 @@ public class IndividualUserView extends AppCompatActivity {
                 dbHelper.sendRequest(req).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(IndividualUserView.this, "Request Sent", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(IndividualUserView.this, "Request sent", Toast.LENGTH_SHORT).show();
+                        //sendreq.setActivated(false);
                     }
                 });
             }
