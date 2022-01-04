@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -23,13 +22,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +33,8 @@ public class RegisterActivity extends AppCompatActivity {
     EditText username;
     EditText password;
     EditText confPass;
-    double lat,longi;
+    long lat;
+    long longi;
     DBHelper dbHelper;
     FusedLocationProviderClient provider;
     //DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReferenceFromUrl("https://termproject-chatapp-default-rtdb.firebaseio.com/");
@@ -62,12 +55,12 @@ public class RegisterActivity extends AppCompatActivity {
                     Location loc = task.getResult();
                     if(loc!=null)
                     {
-                        lat = loc.getLatitude();
-                        longi = loc.getLongitude();
+                        lat = Double.valueOf(loc.getLatitude()).longValue();
+                        longi = Double.valueOf(loc.getLongitude()).longValue();
                     }
                     else {
-                         lat = 31.526542688148975;
-                         longi = 74.28628631738394;
+                         lat = Double.valueOf(31.526542688148975).longValue();
+                         longi = Double.valueOf(74.28628631738394).longValue();
                     }
                 }
             });
@@ -118,13 +111,16 @@ public class RegisterActivity extends AppCompatActivity {
                         Geocoder geocoder = new Geocoder(RegisterActivity.this, Locale.getDefault());
                         String add="";
                         try {
-                            List<Address> li = geocoder.getFromLocation(lat,longi,1);
-                            add = li.get(0).getLocality() + " , " + li.get(0).getAdminArea() + " , " + li.get(0).getCountryName();
+                            while (add.equals("")) {
+                                List<Address> li = geocoder.getFromLocation(lat, longi, 1);
+                                add = li.get(0).getLocality() + " , " + li.get(0).getAdminArea() + " , " + li.get(0).getCountryName();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         UserModel user = new UserModel(lat,longi,usernametext,add,dbHelper.getUID());
                         //databaseReference.child("users").child(uid).setValue(user);
+
                         dbHelper.registerUserData(user);
                         //databaseReference.child("users").child("email").child("username").setValue(usernametext);
                         Intent intent = new Intent(RegisterActivity.this,loginActivity.class);
@@ -152,8 +148,8 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.regPassword);
         confPass = findViewById(R.id.confPass);
         provider = LocationServices.getFusedLocationProviderClient(this);
-        lat = 31.526542688148975;
-        longi = 74.28628631738394;
+        lat = Double.valueOf(31.526542688148975).longValue();
+        longi = Double.valueOf(74.28628631738394).longValue();
         dbHelper = new DBHelper();
     }
 }

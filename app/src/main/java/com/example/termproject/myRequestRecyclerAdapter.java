@@ -29,9 +29,12 @@ public class myRequestRecyclerAdapter extends RecyclerView.Adapter<myRequestView
 
     @Override
     public void onBindViewHolder(@NonNull myRequestViewHolder holder, int position) {
-        holder.setData(requestUser.get(position).uid,requestUser.get(position).username,requestUser.get(position).location);
+        holder.setData(requestUser.get(position).getUid(),requestUser.get(position).getUsername(),requestUser.get(position).getLocation());
     }
-
+    public void setData(List<UserModel> user)
+    {
+        requestUser = user;
+    }
     @Override
     public int getItemCount() {
         return requestUser.size();

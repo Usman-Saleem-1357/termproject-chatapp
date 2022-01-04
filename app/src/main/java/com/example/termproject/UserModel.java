@@ -1,18 +1,57 @@
 package com.example.termproject;
 
-import android.location.Location;
-
 public class UserModel {
 
-    public double lat,longi;
-    public String location;
-    public String uid;
-    public String username;
+    private long lat;
+    private long longi;
+    private String location;
+    private String uid;
+    private String username;
     public UserModel() {
 
     }
 
-    public UserModel(double lat,double longi, String username,String location,String uid) {
+    public long getLat() {
+        return lat;
+    }
+
+    public void setLat(long lat) {
+        this.lat = lat;
+    }
+
+    public long getLongi() {
+        return longi;
+    }
+
+    public void setLongi(long longi) {
+        this.longi = longi;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public UserModel(long lat, long longi, String username, String location, String uid) {
         this.lat = lat;
         this.uid = uid;
         this.location = location;

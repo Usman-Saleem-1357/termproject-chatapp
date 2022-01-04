@@ -11,7 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 public class IndividualUserView extends AppCompatActivity {
     DBHelper dbHelper;
@@ -28,22 +35,55 @@ public class IndividualUserView extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.hasExtra("uid"))
         {
-            while (user == null) {
-                user = dbHelper.getUserData(intent.getStringExtra("uid"));
-            }
-            setData(user);
+            Task<QuerySnapshot> data = dbHelper.firestoreref.collection("Users")
+                    .whereEqualTo("uid",intent.getStringExtra("uid")).get();
+            data.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for(QueryDocumentSnapshot doc : task.getResult())
+                    {
+                        user = doc.toObject(UserModel.class);
+                        setData(user);
+                    }
+                }
+            });
         }
-
-        UserModel finalUser = user;
         sendreq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestModel req = new RequestModel(user.uid);
-                dbHelper.sendRequest(req).addOnCompleteListener(new OnCompleteListener<Void>() {
+                RequestModel req = new RequestModel(user.getUid(), dbHelper.getUID(),"SENT");
+                RequestModel req1 = new RequestModel(user.getUid(),dbHelper.getUID(),"RECEIVED");
+                Task<QuerySnapshot> query = dbHelper.firestoreref.collection("Users").whereEqualTo("uid",dbHelper.getUID()).get();
+                query.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(IndividualUserView.this, "Request sent", Toast.LENGTH_SHORT).show();
-                        //sendreq.setActivated(false);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for (QueryDocumentSnapshot doc : task.getResult())
+                        {
+                            dbHelper.firestoreref.collection("Users").document(doc.getId()).collection("Requests").add(req).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(@NonNull DocumentReference documentReference) {
+                                    dbHelper.firestoreref.collection("Users")
+                                            .whereEqualTo("uid",req.getRequestedto())
+                                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            for (QueryDocumentSnapshot doc : task.getResult())
+                                            {
+                                                dbHelper.firestoreref.collection("Users")
+                                                        .document(doc.getId())
+                                                        .collection("Requests")
+                                                        .add(req1).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    @Override
+                                                    public void onSuccess(@NonNull DocumentReference documentReference) {
+                                                        Toast.makeText(IndividualUserView.this, "REQUEST SENT", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -58,7 +98,7 @@ public class IndividualUserView extends AppCompatActivity {
     }
     public void setData(UserModel user)
     {
-        username.setText(user.username);
-        location.setText(user.location);
+        username.setText(user.getUsername());
+        location.setText(user.getLocation());
     }
 }
