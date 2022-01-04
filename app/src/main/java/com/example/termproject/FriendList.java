@@ -38,9 +38,9 @@ public class FriendList extends AppCompatActivity {
                 for(QueryDocumentSnapshot doc : task.getResult())
                 {
                     UserModel user = doc.toObject(UserModel.class);
-                    Task<QuerySnapshot> reqQuery = dbHelper.firestoreref.collection("Users")
+                    dbHelper.firestoreref.collection("Users")
                             .document(doc.getId())
-                            .collection("Requests")
+                            .collection("Requests").whereEqualTo("status","RECEIVED")
                             .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -51,8 +51,8 @@ public class FriendList extends AppCompatActivity {
                             }
                             for (RequestModel req : requests)
                             {
-                                Task<QuerySnapshot> individualData = dbHelper.firestoreref.collection("Users")
-                                        .whereEqualTo("uid",req.getRequestedto())
+                                dbHelper.firestoreref.collection("Users")
+                                        .whereEqualTo("uid",req.getRequestedby())
                                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
