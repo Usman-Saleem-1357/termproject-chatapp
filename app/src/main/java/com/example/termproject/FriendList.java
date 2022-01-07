@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,7 +34,46 @@ public class FriendList extends AppCompatActivity {
         recyclerView1 = findViewById(R.id.friendlist);
         List<UserModel> users = new ArrayList<>();
         recyclerView1.setLayoutManager(new LinearLayoutManager(this));
-        Task<QuerySnapshot> query = dbHelper.firestoreref.collection("Users").whereEqualTo("uid",dbHelper.getUID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        adapter = new myRequestRecyclerAdapter(users);
+        recyclerView1.setAdapter(adapter);
+        dbHelper.firestoreref.collection("Users")
+                .whereEqualTo("uid",dbHelper.getUID()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        for (QueryDocumentSnapshot doc : value)
+                        {
+                            UserModel user = doc.toObject(UserModel.class);
+                            dbHelper.firestoreref.collection("Users")
+                                    .document(doc.getId())
+                                    .collection("Requests")
+                                    .whereEqualTo("status","RECEIVED").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                    List<RequestModel> requests = new ArrayList<>();
+                                    for (QueryDocumentSnapshot doc : value)
+                                    {
+                                        requests.add(doc.toObject(RequestModel.class));
+                                    }
+                                    for (RequestModel req : requests) {
+                                        dbHelper.firestoreref.collection("Users")
+                                                .whereEqualTo("uid", req.getRequestedby()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                for(QueryDocumentSnapshot doc : value)
+                                                {
+                                                    users.add(doc.toObject(UserModel.class));
+                                                    adapter.setData(users);
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+                /*.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for(QueryDocumentSnapshot doc : task.getResult())
@@ -71,7 +112,7 @@ public class FriendList extends AppCompatActivity {
                     });
                 }
             }
-        });
+        });*/
 
     }
 

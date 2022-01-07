@@ -39,11 +39,6 @@ public class DBHelper{
     public DatabaseReference databaseReference;
     public FirebaseFirestore firestoreref = FirebaseFirestore.getInstance();
     FirebaseAuth fAuth;
-    public interface onGetData
-    {
-        void OnSuccess(UserModel dataSnapshotValue);
-    }
-
     public DBHelper()
     {
         databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://termproject-chatapp-default-rtdb.firebaseio.com/");
