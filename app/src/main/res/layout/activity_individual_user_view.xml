@@ -7,6 +7,23 @@
     tools:context=".IndividualUserView"
     android:orientation="vertical"
     android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:background="@drawable/roundedprofilebuilder">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/individualPicture"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/defaultpfp">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,44 +44,47 @@
         android:textAlignment="center"
         android:layout_margin="10dp"
         android:id="@+id/individuallocation">
-
     </TextView>
-
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+        android:orientation="vertical"
+        android:layout_weight="0.03"
+        android:textAlignment="center">
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
             android:text="Send Request"
             android:id="@+id/sendreq"
+            android:textSize="18sp"
+            android:background="@drawable/send">
 
-            >
-
-        </Button>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+        </androidx.appcompat.widget.AppCompatButton>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:enabled="false"
             android:text="Cancel Request"
             android:id="@+id/cancelreq"
+            android:background="@drawable/cancel"
             android:visibility="gone">
-        </Button>
+        </androidx.appcompat.widget.AppCompatButton>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/receivedReq"
+            android:paddingTop="15dp"
+            android:text="Request Received From User"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:background="#FFE51D"
+            android:textColor="@color/black"
+            android:visibility="gone">
+
+        </TextView>
     </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/receivedReq"
-        android:text="Request Received From User"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:visibility="gone">
-
-    </TextView>
 </LinearLayout>

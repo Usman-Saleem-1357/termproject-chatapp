@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/drawable/cancel.xml" value="0.20260416666666667" />
+        <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/drawable/ic_baseline_add_a_photo_24.xml" value="0.20260416666666667" />
         <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/drawable/roundedinputfields.xml" value="0.20260416666666667" />
+        <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/drawable/roundedprofilebuilder.xml" value="0.20260416666666667" />
+        <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/drawable/send.xml" value="0.20260416666666667" />
         <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.11015625" />
         <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1" />
         <entry key="..\:/AndroidLectures/TermProject/app/src/main/res/layout/activity_chatview.xml" value="0.18645833333333334" />

@@ -1,4 +1,4 @@
-package com.example.termproject;
+package com.example.termproject.Models;
 
 public class UserModel {
 
@@ -7,8 +7,17 @@ public class UserModel {
     private String location;
     private String uid;
     private String username;
+    private String imageURL;
     public UserModel() {
 
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public long getLat() {
@@ -51,8 +60,9 @@ public class UserModel {
         this.username = username;
     }
 
-    public UserModel(long lat, long longi, String username, String location, String uid) {
+    public UserModel(long lat, long longi, String username, String location, String uid,String imageURL) {
         this.lat = lat;
+        this.imageURL = imageURL;
         this.uid = uid;
         this.location = location;
         this.longi = longi;

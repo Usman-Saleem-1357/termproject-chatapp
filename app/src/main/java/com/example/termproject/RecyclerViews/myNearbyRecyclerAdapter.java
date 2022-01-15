@@ -1,37 +1,19 @@
-package com.example.termproject;
+package com.example.termproject.RecyclerViews;
 
-import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
+import com.bumptech.glide.Glide;
+import com.example.termproject.Models.DBHelper;
+import com.example.termproject.Models.UserModel;
+import com.example.termproject.R;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.zip.Inflater;
 
 public class myNearbyRecyclerAdapter extends RecyclerView.Adapter<myNearbyViewHolder>{
 
@@ -67,10 +49,12 @@ public class myNearbyRecyclerAdapter extends RecyclerView.Adapter<myNearbyViewHo
 
         if (!id.equals(userList.get(position).getUid()) && resultant[0]/10000f<30) {
             resultant[0]=0f;
-            holder.setData(userList.get(position).getUsername(), userList.get(position).getLocation(), userList.get(position).getUid());
+            holder.setData(userList.get(position).getUsername(), userList.get(position).getLocation()
+                    , userList.get(position).getUid());
             holder.itemView.setVisibility(View.VISIBLE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
                     , ViewGroup.LayoutParams.WRAP_CONTENT));
+            Glide.with(holder.userImage).load(userList.get(position).getImageURL()).into(holder.userImage);
         }
         else {
             resultant[0]=0.0f;

@@ -1,4 +1,4 @@
-package com.example.termproject;
+package com.example.termproject.RecyclerViews;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.example.termproject.Models.DBHelper;
+import com.example.termproject.Models.UserModel;
+import com.example.termproject.R;
 
 import java.util.List;
 

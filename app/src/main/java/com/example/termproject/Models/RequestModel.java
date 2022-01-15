@@ -1,4 +1,4 @@
-package com.example.termproject;
+package com.example.termproject.Models;
 
 public class RequestModel {
     private String requestedto;

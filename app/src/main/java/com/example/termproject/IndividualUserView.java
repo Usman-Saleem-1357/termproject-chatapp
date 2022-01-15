@@ -3,32 +3,35 @@ package com.example.termproject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.termproject.Models.DBHelper;
+import com.example.termproject.Models.RequestModel;
+import com.example.termproject.Models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Document;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IndividualUserView extends AppCompatActivity {
     DBHelper dbHelper;
     TextView username,location,requestText;
-    Button sendreq,cancelreq;
+    CircleImageView userImage;
+    AppCompatButton sendreq,cancelreq;
     UserModel user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,11 +186,12 @@ public class IndividualUserView extends AppCompatActivity {
         location = findViewById(R.id.individuallocation);
         sendreq = findViewById(R.id.sendreq);
         cancelreq = findViewById(R.id.cancelreq);
+        userImage = findViewById(R.id.individualPicture);
     }
     public void setData(UserModel user)
     {
         username.setText(user.getUsername());
         location.setText(user.getLocation());
-
+        Glide.with(userImage).load(user.getImageURL()).into(userImage);
     }
 }

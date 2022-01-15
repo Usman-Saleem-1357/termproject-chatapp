@@ -1,51 +1,45 @@
-package com.example.termproject;
-
-import android.provider.ContactsContract;
-import android.util.Log;
+package com.example.termproject.Models;
 
 import androidx.annotation.NonNull;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class DBHelper{
     public DatabaseReference databaseReference;
+    public FirebaseStorage firebaseStorage;
+    public StorageReference storageReference;
     public FirebaseFirestore firestoreref = FirebaseFirestore.getInstance();
     FirebaseAuth fAuth;
     public DBHelper()
     {
         databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://termproject-chatapp-default-rtdb.firebaseio.com/");
         fAuth = FirebaseAuth.getInstance();
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
     }
 
-    public void registerUserData(UserModel user)
+    public boolean registerUserData(UserModel user)
     {
         CollectionReference doc = firestoreref.collection("Users");
         Map<String,Object> map = new HashMap<>();
@@ -60,8 +54,8 @@ public class DBHelper{
 
             }
         });
+        return true;
     }
-
 
     public FirestoreRecyclerOptions<UserModel> UserOptions()
     {
