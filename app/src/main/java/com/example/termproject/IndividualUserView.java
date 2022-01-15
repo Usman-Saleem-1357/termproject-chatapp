@@ -40,19 +40,76 @@ public class IndividualUserView extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.hasExtra("uid"))
         {
-            Task<QuerySnapshot> data = dbHelper.firestoreref.collection("Users")
-                    .whereEqualTo("uid",intent.getStringExtra("uid")).get();
-            data.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for(QueryDocumentSnapshot doc : task.getResult())
-                    {
-                        user = doc.toObject(UserModel.class);
-                        setData(user);
+            dbHelper.firestoreref.collection("Users")
+                    .whereEqualTo("uid",intent.getStringExtra("uid"))
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        for (QueryDocumentSnapshot doc : value)
+                        {
+                            user = doc.toObject(UserModel.class);
+                            setData(user);
+                        }
                     }
-                }
-            });
+                });
         }
+        //////////// CHECK IF REQUEST SENT ////////////////////////////////////
+        // Allows separation of sent and received checks ////
+        final RequestModel[] checker = {new RequestModel()};
+        ///////////////////////////////////////////////////
+        dbHelper.firestoreref.collection("Requests")
+                .whereEqualTo("requestedby", dbHelper.getUID())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        for(QueryDocumentSnapshot doc : value) {
+                            RequestModel temp = doc.toObject(RequestModel.class);
+                            requestText.setVisibility(View.GONE);
+                            if (!temp.getRequestedto().equals(user.getUid())) {
+                                sendreq.setVisibility(View.VISIBLE);
+                                cancelreq.setEnabled(false);
+                                cancelreq.setVisibility(View.GONE);
+                            } else {
+                                checker[0] = temp;
+                                cancelreq.setEnabled(true);
+                                cancelreq.setVisibility(View.VISIBLE);
+                                sendreq.setVisibility(View.GONE);
+                                break;
+                            }
+                        }
+                    }
+                });
+
+        //////////////////////////////////////////////////////////////////////
+
+        ///////// CHECK IF REQUEST RECEIVED //////////////////////////////////
+
+        dbHelper.firestoreref.collection("Requests")
+                .whereEqualTo("requestedto", dbHelper.getUID()).limit(2000)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        for (QueryDocumentSnapshot doc : value) {
+                            if(checker[0].getRequestedby() == null) {
+                                RequestModel temp = doc.toObject(RequestModel.class);
+                                cancelreq.setVisibility(View.GONE);
+                                if (!temp.getRequestedby().equals(user.getUid())) {
+                                    sendreq.setVisibility(View.VISIBLE);
+                                    sendreq.setEnabled(true);
+                                    requestText.setVisibility(View.GONE);
+                                } else {
+                                    sendreq.setEnabled(false);
+                                    sendreq.setVisibility(View.GONE);
+                                    requestText.setVisibility(View.VISIBLE);
+                                    checker[0] = new RequestModel();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                });
+
+        //////////////////////////////////////////////////////////////////////
         sendreq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,229 +119,61 @@ public class IndividualUserView extends AppCompatActivity {
         cancelreq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelRequest_Curr_usr();
-                cancelReq_Other_usr();
-            }
-        });
-    }
-
-    public void reqAlreadySent()
-    {
-        dbHelper.firestoreref.collection("Users").whereEqualTo("uid",dbHelper.getUID()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : value)
-                {
-                    dbHelper.firestoreref.collection("Users")
-                            .document(doc.getId())
-                            .collection("Requests")
-                            .whereEqualTo("requestedto",user.getUid())
-                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            for(QueryDocumentSnapshot doc : value)
-                            {
-                                if (doc.exists())
-                                {
-                                    sendreq.setVisibility(View.VISIBLE);
-                                    cancelreq.setVisibility(View.GONE);
-                                }
-                                else {
-                                    cancelreq.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public void cancelRequest_Curr_usr()
-    {
-        final String[] currDocid = {""};
-        dbHelper.firestoreref.collection("Users")
-                .whereEqualTo("uid",dbHelper.getUID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot doc : task.getResult()) {
-                    currDocid[0] = doc.getId();
-                    dbHelper.firestoreref.collection("Users")
-                            .document(doc.getId())
-                            .collection("Requests")
-                            .whereEqualTo("requestedto", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                dbHelper.firestoreref.collection("Users")
-                                        .document(currDocid[0])
-                                        .collection("Requests")
-                                        .document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(@NonNull Void unused) {
-                                        sendreq.setVisibility(View.VISIBLE);
-                                        cancelreq.setVisibility(View.GONE);
-                                        Toast.makeText(IndividualUserView.this, "Friend Request Canceled", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public void cancelReq_Other_usr()
-    {
-        final String[] docID = {""};
-        dbHelper.firestoreref.collection("Users")
-                .whereEqualTo("uid",user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for(QueryDocumentSnapshot doc : task.getResult()) {
-                    docID[0] = doc.getId();
-                    dbHelper.firestoreref.collection("Users")
-                            .document(docID[0])
-                            .collection("Requests")
-                            .whereEqualTo("requestedby", dbHelper.getUID())
-                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                dbHelper.firestoreref.collection("Users")
-                                        .document(docID[0]).collection("Requests")
-                                        .document(doc.getId()).delete()
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(@NonNull Void unused) {
-                                                Toast.makeText(IndividualUserView.this
-                                                        , "Deleted From Received", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                            }
-                        }
-                    });
-                }
+                cancelrequest(true);
             }
         });
 
     }
+
 
     public void sendRequest()
     {
-        RequestModel req = new RequestModel(user.getUid(), dbHelper.getUID(),"SENT");
-        RequestModel req1 = new RequestModel(user.getUid(),dbHelper.getUID(),"RECEIVED");
-        Task<QuerySnapshot> query = dbHelper.firestoreref.collection("Users").whereEqualTo("uid",dbHelper.getUID()).get();
-        query.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        RequestModel req = new RequestModel(user.getUid(),dbHelper.getUID(),"PROCESSING");
+        dbHelper.firestoreref.collection("Requests").add(req).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot doc : task.getResult())
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (task.isSuccessful())
                 {
-                    dbHelper.firestoreref.collection("Users").document(doc.getId()).collection("Requests").add(req).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(@NonNull DocumentReference documentReference) {
-                            dbHelper.firestoreref.collection("Users")
-                                    .whereEqualTo("uid",req.getRequestedto())
-                                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    for (QueryDocumentSnapshot doc : task.getResult())
-                                    {
-                                        dbHelper.firestoreref.collection("Users")
-                                                .document(doc.getId())
-                                                .collection("Requests")
-                                                .add(req1).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(@NonNull DocumentReference documentReference) {
-                                                Toast.makeText(IndividualUserView.this, "REQUEST SENT", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    });
+                    sendreq.setEnabled(false);
+                    cancelreq.setEnabled(true);
+                    sendreq.setVisibility(View.GONE);
+                    cancelreq.setVisibility(View.VISIBLE);
+                    Toast.makeText(IndividualUserView.this, "Request Sent", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    public boolean requestAlreadyReceived()
+    public void cancelrequest(boolean isFired)
     {
-        final boolean[] choice = {false};
-        final String[] docID = {""};
-
-        dbHelper.firestoreref.collection("Users")
-                .whereEqualTo("uid",dbHelper.getUID())
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for(QueryDocumentSnapshot doc : task.getResult()) {
-                    docID[0] = doc.getId();
-                    dbHelper.firestoreref.collection("Users")
-                            .document(docID[0])
-                            .collection("Requests")
-                            .whereEqualTo("requestedby", user.getUid())
-                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            for (QueryDocumentSnapshot doc: task.getResult()) {
-                                if (doc.exists()) {
-                                    cancelreq.setVisibility(View.GONE);
-                                    sendreq.setVisibility(View.GONE);
-                                    requestText.setVisibility(View.VISIBLE);
-                                    choice[0] = true;
-                                } else {
-                                    cancelreq.setVisibility(View.VISIBLE);
-                                    sendreq.setVisibility(View.VISIBLE);
-                                    requestText.setVisibility(View.GONE);
-                                    choice[0] = false;
-                                }
-
-                            }
-                            reqAlreadySent();
+        if (isFired) {
+            dbHelper.firestoreref.collection("Requests")
+                    .whereEqualTo("requestedto", user.getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                        RequestModel req = doc.toObject(RequestModel.class);
+                        if (req.getRequestedby().equals(dbHelper.getUID()))   //// IF REQUEST WAS SENT BY ME TO SELECTED USER
+                        {
+                            dbHelper.firestoreref.collection("Requests")
+                                    .document(doc.getId())
+                                    .delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(@NonNull Void unused) {
+                                            Toast.makeText(IndividualUserView.this, "REQUEST CANCELLED", Toast.LENGTH_SHORT).show();
+                                            sendreq.setEnabled(true);
+                                            cancelreq.setEnabled(false);
+                                            sendreq.setVisibility(View.VISIBLE);
+                                            cancelreq.setVisibility(View.GONE);
+                                        }
+                                    });
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(IndividualUserView.this, "FAILED", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    }
                 }
-            }
-        });
-
-        /*dbHelper.firestoreref.collection("Users").whereEqualTo("uid",dbHelper.getUID()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                for(QueryDocumentSnapshot doc : value)
-                {
-                    docID[0] = doc.getId();
-                    dbHelper.firestoreref.collection("Users")
-                            .document(docID[0])
-                            .collection("Requests")
-                            .whereEqualTo("requestedby",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            for (QueryDocumentSnapshot doc: value) {
-                                if(doc.exists())
-                                {
-                                    cancelreq.setVisibility(View.GONE);
-                                    sendreq.setVisibility(View.GONE);
-                                    requestText.setVisibility(View.VISIBLE);
-                                    choice[0] = true;
-                                }
-                                else{
-                                    choice[0]  = false;
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });*/
-        return choice[0];
+            });
+        }
     }
 
     public void BindViews()
@@ -299,6 +188,6 @@ public class IndividualUserView extends AppCompatActivity {
     {
         username.setText(user.getUsername());
         location.setText(user.getLocation());
-        requestAlreadyReceived();
+
     }
 }

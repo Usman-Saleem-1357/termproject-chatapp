@@ -23,7 +23,7 @@
         android:layout_marginBottom="72dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:src="@drawable/ic_baseline_message_24"
+        android:src="@drawable/ic_baseline_person_add_24"
         android:id="@+id/toRequests">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 </androidx.constraintlayout.widget.ConstraintLayout>
