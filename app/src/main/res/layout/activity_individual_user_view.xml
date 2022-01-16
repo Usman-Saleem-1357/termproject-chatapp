@@ -86,5 +86,19 @@
             android:visibility="gone">
 
         </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:paddingTop="15dp"
+            android:text="ALREADY FRIENDS"
+            android:textAlignment="center"
+            android:id="@+id/already_friends"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:background="@color/black">
+
+        </TextView>
     </LinearLayout>
 </LinearLayout>

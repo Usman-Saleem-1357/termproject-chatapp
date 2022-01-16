@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.termproject.Models.DBHelper;
+import com.example.termproject.Models.Friends;
 import com.example.termproject.Models.RequestModel;
 import com.example.termproject.Models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,10 +30,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IndividualUserView extends AppCompatActivity {
     DBHelper dbHelper;
-    TextView username,location,requestText;
+    TextView username,location,requestText,already_friends;
     CircleImageView userImage;
     AppCompatButton sendreq,cancelreq;
     UserModel user;
+    String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +45,7 @@ public class IndividualUserView extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.hasExtra("uid"))
         {
+            uid = intent.getStringExtra("uid");
             dbHelper.firestoreref.collection("Users")
                     .whereEqualTo("uid",intent.getStringExtra("uid"))
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -68,6 +71,7 @@ public class IndividualUserView extends AppCompatActivity {
                         for(QueryDocumentSnapshot doc : value) {
                             RequestModel temp = doc.toObject(RequestModel.class);
                             requestText.setVisibility(View.GONE);
+                            already_friends.setVisibility(View.GONE);
                             if (!temp.getRequestedto().equals(user.getUid())) {
                                 sendreq.setVisibility(View.VISIBLE);
                                 cancelreq.setEnabled(false);
@@ -96,6 +100,7 @@ public class IndividualUserView extends AppCompatActivity {
                             if(checker[0].getRequestedby() == null) {
                                 RequestModel temp = doc.toObject(RequestModel.class);
                                 cancelreq.setVisibility(View.GONE);
+                                already_friends.setVisibility(View.GONE);
                                 if (!temp.getRequestedby().equals(user.getUid())) {
                                     sendreq.setVisibility(View.VISIBLE);
                                     sendreq.setEnabled(true);
@@ -123,6 +128,24 @@ public class IndividualUserView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 cancelrequest(true);
+            }
+        });
+
+
+        dbHelper.firestoreref.collection("Friends").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : value){
+                    Friends friends = doc.toObject(Friends.class);
+                    if (friends.getReverseid()!=null){
+                        if(friends.getReverseid().contains(uid) && friends.getReverseid().contains(dbHelper.getUID())){
+                            requestText.setVisibility(View.GONE);
+                            sendreq.setVisibility(View.GONE);
+                            cancelreq.setVisibility(View.GONE);
+                            already_friends.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
             }
         });
 
@@ -181,6 +204,7 @@ public class IndividualUserView extends AppCompatActivity {
 
     public void BindViews()
     {
+        already_friends = findViewById(R.id.already_friends);
         requestText = findViewById(R.id.receivedReq);
         username = findViewById(R.id.individualuser);
         location = findViewById(R.id.individuallocation);

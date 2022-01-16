@@ -68,6 +68,7 @@ public class loginActivity extends AppCompatActivity {
                     Intent intent1 = new Intent(loginActivity.this,NearbyUserList.class);
                     intent1.putExtra("uid",dbHelper.getUID());
                     startActivity(intent1);
+                    finish();
                 }
                 else {
                     progressBar.dismiss();

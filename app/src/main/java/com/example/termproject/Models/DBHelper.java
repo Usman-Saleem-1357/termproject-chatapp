@@ -30,7 +30,7 @@ public class DBHelper{
     public FirebaseStorage firebaseStorage;
     public StorageReference storageReference;
     public FirebaseFirestore firestoreref = FirebaseFirestore.getInstance();
-    FirebaseAuth fAuth;
+    public FirebaseAuth fAuth;
     public DBHelper()
     {
         databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://termproject-chatapp-default-rtdb.firebaseio.com/");

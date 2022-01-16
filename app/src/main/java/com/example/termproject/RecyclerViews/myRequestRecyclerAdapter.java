@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.termproject.Models.DBHelper;
 import com.example.termproject.Models.UserModel;
 import com.example.termproject.R;
@@ -31,6 +32,7 @@ public class myRequestRecyclerAdapter extends RecyclerView.Adapter<myRequestView
     @Override
     public void onBindViewHolder(@NonNull myRequestViewHolder holder, int position) {
         holder.setData(requestUser.get(position).getUid(),requestUser.get(position).getUsername(),requestUser.get(position).getLocation());
+        Glide.with(holder.userImage).load(requestUser.get(position).getImageURL()).into(holder.userImage);
     }
     public void setData(List<UserModel> user)
     {
